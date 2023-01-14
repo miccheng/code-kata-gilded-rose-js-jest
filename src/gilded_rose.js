@@ -12,13 +12,14 @@ class Shop {
     this.legendaryItems = ['Sulfuras, Hand of Ragnaros']
     this.appreciatingItems = ['Aged Brie', 'Backstage passes to a TAFKAL80ETC concert']
     this.maxQuality = 50
+    this.rateOfChange = 1
   }
 
   isExpired(item) {
     return item.sellIn < 0
   }
 
-  appreciatedQuality(item, rate=1) {
+  appreciatedQuality(item, rate=this.rateOfChange) {
     if (item.quality != this.maxQuality) {
       item.quality = item.quality + rate
     }
@@ -27,10 +28,11 @@ class Shop {
     return item
   }
 
-  depreciateQuality(item, rate=1) {
+  depreciateQuality(item, rate=this.rateOfChange) {
     if (item.quality > 0) {
       item.quality = item.quality - rate
     }
+    if (item.quality < 0) item.quality = 0
 
     return item
   }
@@ -42,32 +44,36 @@ class Shop {
 
     item.sellIn = item.sellIn - 1
 
-    if (this.appreciatingItems.includes(item.name)) {
-      if (item.name === 'Backstage passes to a TAFKAL80ETC concert') {
-        if (item.sellIn < 5) {
-          item = this.appreciatedQuality(item, 3)
-        } else if (item.sellIn < 10) {
-          item = this.appreciatedQuality(item, 2)
-        } else {
-          item = this.appreciatedQuality(item)
-        }
+    if (item.name === 'Backstage passes to a TAFKAL80ETC concert') {
+      if (item.sellIn < 5) {
+        item = this.appreciatedQuality(item, this.rateOfChange * 3)
+      } else if (item.sellIn < 10) {
+        item = this.appreciatedQuality(item, this.rateOfChange * 2)
       } else {
         item = this.appreciatedQuality(item)
       }
-    } else {
-      if (item.quality > 0) {
-        item.quality = item.quality - 1
+
+      if (this.isExpired(item)) {
+        item.quality = 0
       }
-    }    
+
+      return item
+    }
+
+    if (item.name === 'Aged Brie' ) {
+      item = this.appreciatedQuality(item)
+
+      if (this.isExpired(item)) {
+        item = this.appreciatedQuality(item)
+      }
+
+      return item
+    }
 
     if (this.isExpired(item)) {
-      if (item.name === 'Aged Brie') {
-        item = this.appreciatedQuality(item)
-      } else if(item.name === 'Backstage passes to a TAFKAL80ETC concert') {
-        item.quality = 0
-      } else {
-        item = this.depreciateQuality(item)
-      }
+      item = this.depreciateQuality(item, this.rateOfChange * 2)
+    } else {
+      item = this.depreciateQuality(item)
     }
 
     return item
