@@ -142,15 +142,20 @@ describe('Gilded Rose', function() {
       expect(items[6].quality).toBe(0)
     })
 
-    xit("'Conjured' items degrade in Quality twice as fast as normal items", () => {
+    it("'Conjured' items degrade in Quality twice as fast as normal items", () => {
+      const [normalSellIn, expiredSellIn, longExpiredSellIn] = [20, 0, -1]
+
       const gildedRose = new Shop([
-        new Item('Conjured', sellIn, quality)
+        new Item('Conjured', normalSellIn, quality),
+        new Item('Conjured', expiredSellIn, quality),
+        new Item('Conjured', longExpiredSellIn, quality)
       ])
 
       const items = gildedRose.updateQuality()
 
-      expect(items[0].sellIn).toBe(sellIn - normalRate)
       expect(items[0].quality).toBe(quality - (normalRate * 2))
+      expect(items[1].quality).toBe(quality - (normalRate * 4))
+      expect(items[2].quality).toBe(quality - (normalRate * 4))
     })
   })
 })

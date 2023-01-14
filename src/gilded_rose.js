@@ -70,6 +70,16 @@ class Shop {
       return item
     }
 
+    if (item.name === 'Conjured' ) {
+      if (this.isExpired(item)) {
+        item = this.depreciateQuality(item, this.rateOfChange * 4)
+      } else {
+        item = this.depreciateQuality(item, this.rateOfChange * 2)
+      }
+
+      return item
+    }
+
     if (this.isExpired(item)) {
       item = this.depreciateQuality(item, this.rateOfChange * 2)
     } else {
