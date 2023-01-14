@@ -38,6 +38,8 @@ class Shop {
   }
 
   updateItem(item) {
+    let rateOfQualityChange = this.rateOfChange 
+
     if (this.legendaryItems.includes(item.name)) {
       return item
     }
@@ -46,45 +48,45 @@ class Shop {
 
     if (item.name === 'Backstage passes to a TAFKAL80ETC concert') {
       if (item.sellIn < 5) {
-        item = this.appreciatedQuality(item, this.rateOfChange * 3)
+        rateOfQualityChange = rateOfQualityChange * 3
       } else if (item.sellIn < 10) {
-        item = this.appreciatedQuality(item, this.rateOfChange * 2)
-      } else {
-        item = this.appreciatedQuality(item)
+        rateOfQualityChange = rateOfQualityChange * 2
       }
 
-      if (this.isExpired(item)) {
-        item.quality = 0
-      }
+      item = this.appreciatedQuality(item, rateOfQualityChange)
+
+      if (this.isExpired(item)) item.quality = 0
 
       return item
     }
 
     if (item.name === 'Aged Brie' ) {
-      item = this.appreciatedQuality(item)
-
       if (this.isExpired(item)) {
-        item = this.appreciatedQuality(item)
+        rateOfQualityChange = rateOfQualityChange * 2
       }
+
+      item = this.appreciatedQuality(item, rateOfQualityChange)
 
       return item
     }
 
     if (item.name === 'Conjured' ) {
+      rateOfQualityChange = rateOfQualityChange * 2
+
       if (this.isExpired(item)) {
-        item = this.depreciateQuality(item, this.rateOfChange * 4)
-      } else {
-        item = this.depreciateQuality(item, this.rateOfChange * 2)
+        rateOfQualityChange = rateOfQualityChange * 2
       }
+
+      item = this.depreciateQuality(item, rateOfQualityChange)
 
       return item
     }
 
     if (this.isExpired(item)) {
-      item = this.depreciateQuality(item, this.rateOfChange * 2)
-    } else {
-      item = this.depreciateQuality(item)
-    }
+      rateOfQualityChange = rateOfQualityChange * 2
+    } 
+
+    item = this.depreciateQuality(item, rateOfQualityChange)
 
     return item
   }
