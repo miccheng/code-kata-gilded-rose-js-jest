@@ -11,6 +11,15 @@ class Shop {
     this.items = items
     this.legendaryItems = ['Sulfuras, Hand of Ragnaros']
     this.appreciatingItems = ['Aged Brie', 'Backstage passes to a TAFKAL80ETC concert']
+    this.maxQuality = 50
+  }
+
+  isMaxQuality(item) {
+    return item.quality === this.maxQuality
+  }
+
+  isExpired(item) {
+    return item.sellIn < 0
   }
 
   updateItem(item) {
@@ -18,17 +27,19 @@ class Shop {
       return item
     }
 
+    item.sellIn = item.sellIn - 1
+
     if (this.appreciatingItems.includes(item.name)) {
-      if (item.quality < 50) {
+      if (!this.isMaxQuality(item)) {
         item.quality = item.quality + 1
         if (item.name == 'Backstage passes to a TAFKAL80ETC concert') {
-          if (item.sellIn < 11) {
-            if (item.quality < 50) {
+          if (item.sellIn < 10) {
+            if (!this.isMaxQuality(item)) {
               item.quality = item.quality + 1
             }
           }
-          if (item.sellIn < 6) {
-            if (item.quality < 50) {
+          if (item.sellIn < 5) {
+            if (!this.isMaxQuality(item)) {
               item.quality = item.quality + 1
             }
           }
@@ -38,12 +49,14 @@ class Shop {
       if (item.quality > 0) {
         item.quality = item.quality - 1
       }
-    }
+    }    
 
-    item.sellIn = item.sellIn - 1
-
-    if (item.sellIn < 0) {
-      if (item.name != 'Aged Brie') {
+    if (this.isExpired(item)) {
+      if (item.name === 'Aged Brie') {
+        if (!this.isMaxQuality(item)) {
+          item.quality = item.quality + 1
+        }
+      } else {
         if (item.name != 'Backstage passes to a TAFKAL80ETC concert') {
           if (item.quality > 0) {
             item.quality = item.quality - 1
@@ -51,12 +64,9 @@ class Shop {
         } else {
           item.quality = item.quality - item.quality
         }
-      } else {
-        if (item.quality < 50) {
-          item.quality = item.quality + 1
-        }
       }
     }
+
     return item
   }
 
