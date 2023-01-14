@@ -25,9 +25,8 @@ class Shop {
         item.quality = item.quality + rate
         break;
       case 'DEPRECIATE':
-        item.quality = item.quality - rate
-        break;
       default:
+        item.quality = item.quality - rate
         break;
     }
 
